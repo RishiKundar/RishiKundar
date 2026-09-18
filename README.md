@@ -21,7 +21,7 @@
 ## ⚡ Professional Summary
 
 - 💼 **Software Developer at Tata Consultancy Services (TCS)** working on enterprise banking and payment platforms, with experience in backend performance optimization and production systems.
-- 🚆 **Creator of [Distributed Train Reservation & Payment Platform](https://github.com/RishiKundar/train-booking-system)** — a 6-service event-driven system using Kafka, PostgreSQL, pessimistic locking, idempotency and Razorpay.
+- 🚆 **Creator of [Distributed Train Reservation & Payment Platform](https://github.com/RishiKundar/train-booking-system)** and **[Scheduly: Distributed Job Scheduler](https://github.com/RishiKundar/scheduly)**.
 - 🎯 **Focused on:** concurrency, race-condition prevention, transaction consistency, idempotent APIs, asynchronous processing and resilient backend architecture.
 
 > I enjoy understanding **why systems fail under load** and designing the backend so those failures are handled intentionally.
@@ -47,11 +47,67 @@
 
 ---
 
-# 🚆 Featured Engineering Project
+# 🚀 Featured Engineering Projects
 
 <div align="center">
 
-## Distributed Train Reservation & Payment Platform
+## 1. Scheduly: Distributed Job Scheduler
+
+<a href="https://github.com/RishiKundar/scheduly"><img src="https://img.shields.io/badge/View%20Repository-181717?style=for-the-badge&logo=github&logoColor=white" alt="View Repository" /></a>
+
+</div>
+
+An **enterprise-grade distributed job scheduling engine** built to handle massive scale. It guarantees at-least-once delivery of HTTP webhooks and prevents duplicate executions across multiple worker nodes using advanced database locking and event streaming.
+
+### 🏗️ Architecture
+
+```text
+                     ┌──────────────────┐
+                     │ React UI (Vite)  │
+                     └────────┬─────────┘
+                              │
+                              ▼
+                ┌──────────────────────────┐
+                │      API / Scheduler     │
+                │ JWT • SSRF Check • AES   │
+                └─────────────┬────────────┘
+                              │
+             ┌────────────────┼────────────────┐
+             ▼                ▼                ▼
+     ┌─────────────┐   ┌────────────┐   ┌────────────┐
+     │ PostgreSQL  │   │   Kafka    │   │ PostgreSQL │
+     │  (Jobs)     │   │ (Outbox)   │   │(Executions)│
+     └──────┬──────┘   └──────┬─────┘   └──────┬─────┘
+            │                 │                │
+            └─────────┐       │       ┌────────┘
+                      ▼       ▼       ▼
+                  ┌───────────────────────┐
+                  │ Worker Nodes (Scale)  │
+                  │ FOR UPDATE SKIP LOCKED│
+                  └───────────┬───────────┘
+                              │
+                              ▼
+                      ┌───────────────┐
+                      │ Target Webhook│
+                      └───────────────┘
+```
+
+### 🔥 Engineering Problems Solved
+
+**📥 Transactional Outbox Pattern** — Solves the dual-write problem by saving jobs and `OutboxEvent`s in a single ACID transaction, ensuring no data loss before reaching Kafka.
+
+**🔒 Atomic Database Leasing** — Worker nodes utilize pessimistic locking (`FOR UPDATE SKIP LOCKED`) to acquire atomic 30-second leases on jobs, guaranteeing exactly-once execution semantics across distributed workers.
+
+**♻️ Resiliency & Auto-Recovery** — Built-in exponential backoff for failed webhooks, plus a dedicated recovery loop that reclaims "orphaned" jobs if a worker node crashes mid-execution.
+
+**🔐 Bank-Grade Security** — Multi-Tenant JWT authentication and AES-GCM encryption at rest for sensitive API keys and headers.
+
+
+<br/>
+
+<div align="center">
+
+## 2. Distributed Train Reservation & Payment Platform
 
 <a href="https://github.com/RishiKundar/train-booking-system"><img src="https://img.shields.io/badge/View%20Repository-181717?style=for-the-badge&logo=github&logoColor=white" alt="View Repository" /></a>
 
