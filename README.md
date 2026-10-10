@@ -21,7 +21,7 @@
 ## ⚡ Professional Summary
 
 - 💼 **Software Developer at Tata Consultancy Services (TCS)** working on enterprise banking and payment platforms, with experience in backend performance optimization and production systems.
-- 🚆 **Creator of [Distributed Train Reservation & Payment Platform](https://github.com/RishiKundar/train-booking-system)** and **[Scheduly: Distributed Job Scheduler](https://github.com/RishiKundar/scheduly)**.
+- 🚆 **Creator of [Distributed Train Reservation & Payment Platform](https://github.com/RishiKundar/train-booking-system)**, **[Scheduly: Distributed Job Scheduler](https://github.com/RishiKundar/scheduly)**, and a **[Digital Banking System](https://github.com/RishiKundar/digital-banking-system)**.
 - 🎯 **Focused on:** concurrency, race-condition prevention, transaction consistency, idempotent APIs, asynchronous processing and resilient backend architecture.
 
 > I enjoy understanding **why systems fail under load** and designing the backend so those failures are handled intentionally.
@@ -157,11 +157,6 @@ A production-style **event-driven train reservation platform** built to explore 
 
 **🔒 Concurrent Seat Booking** — Database-level pessimistic locking prevents competing transactions from reserving the same inventory.
 
-```java
-@Lock(LockModeType.PESSIMISTIC_WRITE)
-Optional<SeatInventory> findById(Long seatId);
-```
-
 **🔑 Idempotent APIs** — `idempotencyKey` handling makes retries safe and prevents duplicate logical bookings.
 
 **📨 Event-Driven Processing** — Kafka decouples booking, payment and notification workflows and absorbs burst traffic.
@@ -170,7 +165,61 @@ Optional<SeatInventory> findById(Long seatId);
 
 **💳 Payment Compensation** — Razorpay webhook verification plus seat rollback handles payment failure after inventory allocation.
 
-**🛡️ Reactive Gateway** — Spring Cloud Gateway provides JWT authentication, RBAC context propagation and token-bucket rate limiting with Bucket4j + Caffeine.
+<br/>
+
+<div align="center">
+
+## 3. Event-Driven Digital Banking System
+
+<a href="https://github.com/RishiKundar/digital-banking-system"><img src="https://img.shields.io/badge/View%20Repository-181717?style=for-the-badge&logo=github&logoColor=white" alt="View Repository" /></a>
+
+</div>
+
+A highly scalable **banking microservices ecosystem** designed for secure transaction routing, real-time fraud detection, and reliable payment processing using event-driven architecture.
+
+### 🏗️ Architecture
+
+```text
+                       ┌──────────────────┐
+                       │    Client App    │
+                       └────────┬─────────┘
+                                │
+                                ▼
+                  ┌───────────────────────────┐
+                  │       API Gateway         │
+                  │ WebFlux • Redis RateLimit │
+                  └─────────────┬─────────────┘
+                                │
+            ┌───────────────────┼───────────────────┐
+            ▼                   ▼                   ▼
+    ┌──────────────┐    ┌───────────────┐   ┌──────────────┐
+    │   Account    │    │  Transaction  │   │   Payment    │
+    │   Service    │    │    Service    │   │   Service    │
+    └───────┬──────┘    └───────┬───────┘   └───────┬──────┘
+            │                   │                   │
+            └─────────┐         │         ┌─────────┘
+                      ▼         ▼         ▼
+                   ┌─────────────────────────┐
+                   │      Apache Kafka       │
+                   └────────────┬────────────┘
+                                │
+                   ┌────────────┴────────────┐
+                   ▼                         ▼
+           ┌───────────────┐         ┌───────────────┐
+           │     Fraud     │         │ Notification  │
+           │   Detection   │         │    Service    │
+           └───────────────┘         └───────────────┘
+```
+
+### 🔥 Engineering Problems Solved
+
+**🛡️ API Security & Rate Limiting** — Configured Spring Cloud Gateway to securely route requests utilizing Redis-backed token bucket algorithms to prevent DDoS attacks.
+
+**🧩 Decoupled Microservices** — Designed with the *Database-per-Service* pattern utilizing isolated NeonDB (PostgreSQL) instances to ensure strong boundaries.
+
+**🚨 Real-Time Fraud Analysis** — Consumes massive transaction event streams via Kafka to calculate velocity and flag suspicious activity entirely asynchronously.
+
+**🔐 Secure Configurations** — Abstracted sensitive parameters (Database URIs, Razorpay Secrets) out of application source code into secure environment runtimes.
 
 ---
 
